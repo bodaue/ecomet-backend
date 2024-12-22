@@ -19,9 +19,7 @@ class ProjectSettings(BaseSettings, env_prefix="PROJECT_"):
 
 
 class GithubSettings(BaseSettings, env_prefix="GITHUB_"):
-    app_id: int
-    installation_id: int
-    private_key_path: str
+    access_token: SecretStr
 
 
 class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
@@ -41,8 +39,11 @@ class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
 
 class Settings(BaseModel):
     project: ProjectSettings
+    github: GithubSettings
     postgres: PostgresSettings
 
 
 def create_settings() -> Settings:
-    return Settings(project=ProjectSettings(), postgres=PostgresSettings())
+    return Settings(
+        project=ProjectSettings(), github=GithubSettings(), postgres=PostgresSettings()
+    )
