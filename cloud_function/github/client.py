@@ -1,5 +1,6 @@
 from collections.abc import AsyncGenerator
 from datetime import date, datetime
+from http import HTTPStatus
 from types import TracebackType
 from typing import Any
 from urllib.parse import urljoin
@@ -14,7 +15,6 @@ from cloud_function.github.settings import ParserSettings
 class GitHubClient:
     API_BASE_URL = "https://api.github.com"
     ITEMS_PER_PAGE = 100
-    HTTP_NOT_FOUND = 404
 
     def __init__(self, settings: ParserSettings) -> None:
         self._auth = GitHubAuth(
@@ -87,7 +87,7 @@ class GitHubClient:
                     "GET", f"repos/{owner}/{repo}/commits", params=params
                 )
             except aiohttp.ClientResponseError as e:
-                if e.status == self.HTTP_NOT_FOUND:
+                if e.status == HTTPStatus.NOT_FOUND:
                     break
                 raise
 
