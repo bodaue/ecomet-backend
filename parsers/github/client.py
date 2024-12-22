@@ -1,5 +1,7 @@
 from collections.abc import AsyncGenerator
 from datetime import date, datetime
+from types import TracebackType
+from typing import Any
 from urllib.parse import urljoin
 
 import aiohttp
@@ -12,6 +14,7 @@ from src.core.settings import Settings
 
 class GitHubClient:
     API_BASE_URL = "https://api.github.com"
+    ITEMS_PER_PAGE = 100
 
     def __init__(self, settings: Settings) -> None:
         self._auth = GitHubAuth(
@@ -23,7 +26,12 @@ class GitHubClient:
         self._session = aiohttp.ClientSession(headers=self._auth.get_headers())
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self._session:
             await self._session.close()
             self._session = None
@@ -32,12 +40,11 @@ class GitHubClient:
         """Build a full URL for the GitHub API endpoint"""
         return urljoin(f"{self.API_BASE_URL}/", endpoint.lstrip("/"))
 
-    async def _make_request(self, method: str, endpoint: str, **kwargs) -> dict:
+    async def _make_request(self, method: str, endpoint: str, **kwargs: Any) -> dict:
         """Make an authenticated request to the GitHub API"""
         if not self._session:
-            raise RuntimeError(
-                "Client not initialized. Use 'async with' context manager."
-            )
+            msg = "Client not initialized. Use 'async with' context manager"
+            raise RuntimeError(msg)
 
         url = self._build_url(endpoint)
         async with self._session.request(method, url, **kwargs) as response:
@@ -45,24 +52,22 @@ class GitHubClient:
             return await response.json()
 
     async def get_top_repositories(
-        self, language: str | None = None, limit: int = 100
+        self, language: str | None = None, limit: int = ITEMS_PER_PAGE
     ) -> AsyncGenerator[GitHubRepo, None]:
         """Get top repositories sorted by stars"""
         params = {
             "q": f"language:{language}" if language else "stars:>1",
             "sort": "stars",
             "order": "desc",
-            "per_page": min(limit, 100),
+            "per_page": min(limit, self.ITEMS_PER_PAGE),
         }
 
         data = await self._make_request("GET", "search/repositories", params=params)
 
-        count = 0
-        for item in data["items"]:
-            if count >= limit:
+        for i, item in enumerate(data["items"]):
+            if i >= limit:
                 break
             yield GitHubRepo.model_validate(item)
-            count += 1
 
     async def get_repository_activity(
         self, owner: str, repo: str, since: date, until: date
@@ -103,7 +108,7 @@ class GitHubClient:
                     ),
                 )
 
-            if len(data) < 100:
+            if len(data) < self.ITEMS_PER_PAGE:
                 break
 
             page += 1

@@ -34,7 +34,7 @@ ignore = [
     "ANN401",
     "I001", "INP001",
     "FBT001", "FBT002",
-    "G004",
+    "G004", "TRY401"
 ]
 
 [build-system]
