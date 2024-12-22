@@ -2,11 +2,14 @@ import uvicorn
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
+from src.api.routes import top100, activity
 from src.core.di.main import container_factory
+from src.core.settings import create_settings
 
 
 def setup_routers(app: FastAPI) -> None:
-    pass
+    app.include_router(top100.router)
+    app.include_router(activity.router)
 
 
 def setup_di_container(app: FastAPI) -> None:
@@ -15,9 +18,10 @@ def setup_di_container(app: FastAPI) -> None:
 
 
 def create_application() -> FastAPI:
+    settings = create_settings()
     app = FastAPI(
-        title="Ecomet",
-        debug=True,
+        title=settings.project.title,
+        debug=settings.project.debug,
         root_path="/api",
     )
 

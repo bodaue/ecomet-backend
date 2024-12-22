@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import IPvAnyAddress, SecretStr, Field, BaseModel
+from pydantic import SecretStr, Field, BaseModel
 from pydantic_settings import BaseSettings as _BaseSettings
 from pydantic_settings import SettingsConfigDict
 
@@ -13,8 +13,19 @@ class BaseSettings(_BaseSettings):
     )
 
 
+class ProjectSettings(BaseSettings, env_prefix="PROJECT_"):
+    title: str
+    debug: bool = False
+
+
+class GithubSettings(BaseSettings, env_prefix="GITHUB_"):
+    app_id: int
+    installation_id: int
+    private_key_path: str
+
+
 class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
-    host: IPvAnyAddress
+    host: str
     port: Annotated[int, Field(gt=0, lt=65536)]
     user: str
     password: SecretStr
@@ -22,15 +33,16 @@ class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
 
     def build_dsn(self) -> str:
         return (
-            f"postgresql+asyncpg://"
+            f"postgresql://"
             f"{self.user}:{self.password.get_secret_value()}"
             f"@{self.host}:{self.port}/{self.db}"
         )
 
 
 class Settings(BaseModel):
+    project: ProjectSettings
     postgres: PostgresSettings
 
 
 def create_settings() -> Settings:
-    return Settings(postgres=PostgresSettings())
+    return Settings(project=ProjectSettings(), postgres=PostgresSettings())

@@ -1,9 +1,10 @@
-from datetime import datetime
+import datetime
 
 from pydantic import BaseModel
 
 
 class Activity(BaseModel):
-    date: datetime
+    date: datetime.date
     commits: int
     authors: list[str]
+    repository_id: int
