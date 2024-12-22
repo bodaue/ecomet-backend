@@ -7,9 +7,9 @@ from datetime import datetime, date, timedelta, UTC
 import asyncpg
 from asyncpg import Pool
 
-from .client import GitHubClient
-from .schemas import GitHubRepo, GitHubCommit
-from .settings import create_parser_settings, ParserSettings
+from cloud_function.github.client import GitHubClient
+from cloud_function.github.schemas import GitHubRepo, GitHubCommit
+from cloud_function.github.settings import ParserSettings, create_parser_settings
 
 # Configure logging
 logging.basicConfig(
@@ -46,7 +46,7 @@ class GitHubParser:
                 }
 
                 # Clear current data
-                await conn.execute("TRUNCATE TABLE top100")
+                await conn.execute("TRUNCATE TABLE top100, activity CASCADE")
 
                 # Insert new data with position tracking
                 for position, repo in enumerate(repos, 1):

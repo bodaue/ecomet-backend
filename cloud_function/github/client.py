@@ -7,16 +7,16 @@ from urllib.parse import urljoin
 import aiohttp
 from starlette import status
 
-from parsers.github.auth import GitHubAuth
-from parsers.github.schemas import GitHubRepo, GitHubCommit
-from src.core.settings import Settings
+from cloud_function.github.auth import GitHubAuth
+from cloud_function.github.schemas import GitHubRepo, GitHubCommit
+from cloud_function.github.settings import ParserSettings
 
 
 class GitHubClient:
     API_BASE_URL = "https://api.github.com"
     ITEMS_PER_PAGE = 100
 
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: ParserSettings) -> None:
         self._auth = GitHubAuth(
             access_token=settings.github.access_token.get_secret_value()
         )

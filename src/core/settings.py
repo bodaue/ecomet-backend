@@ -18,10 +18,6 @@ class ProjectSettings(BaseSettings, env_prefix="PROJECT_"):
     debug: bool = False
 
 
-class GithubSettings(BaseSettings, env_prefix="GITHUB_"):
-    access_token: SecretStr
-
-
 class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
     host: str
     port: Annotated[int, Field(gt=0, lt=65536)]
@@ -39,11 +35,8 @@ class PostgresSettings(BaseSettings, env_prefix="POSTGRES_"):
 
 class Settings(BaseModel):
     project: ProjectSettings
-    github: GithubSettings
     postgres: PostgresSettings
 
 
 def create_settings() -> Settings:
-    return Settings(
-        project=ProjectSettings(), github=GithubSettings(), postgres=PostgresSettings()
-    )
+    return Settings(project=ProjectSettings(), postgres=PostgresSettings())
