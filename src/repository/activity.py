@@ -1,14 +1,14 @@
 from datetime import date
 
-from asyncpg import Pool
+from asyncpg import Connection
 
 from src.models.activity import Activity
 from src.repository.base import BaseRepository
 
 
 class ActivityRepository(BaseRepository[Activity]):
-    def __init__(self, pool: Pool) -> None:
-        super().__init__(pool, Activity)
+    def __init__(self, conn: Connection) -> None:
+        super().__init__(conn, Activity)
 
     async def get_repo_activity(
         self, owner: str, repo: str, since: date, until: date

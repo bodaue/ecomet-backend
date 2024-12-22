@@ -1,4 +1,4 @@
-from asyncpg import Pool
+from asyncpg import Connection
 
 from src.core.enums import RepositorySort, SortOrder
 from src.models.repository import Repository
@@ -6,8 +6,8 @@ from src.repository.base import BaseRepository
 
 
 class Top100Repository(BaseRepository[Repository]):
-    def __init__(self, pool: Pool) -> None:
-        super().__init__(pool, Repository)
+    def __init__(self, conn: Connection) -> None:
+        super().__init__(conn, Repository)
 
     async def get_top_repos(
         self,
