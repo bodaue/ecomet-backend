@@ -9,7 +9,7 @@ class GitHubOwner(BaseModel):
 
 class GitHubRepo(BaseModel):
     name: str
-    owner: GitHubOwner  # изменили тип на GitHubOwner
+    owner: GitHubOwner
     stars: int = Field(alias="stargazers_count")
     watchers: int = Field(alias="watchers_count")
     forks: int = Field(alias="forks_count")
