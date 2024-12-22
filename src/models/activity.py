@@ -7,4 +7,3 @@ class Activity(BaseModel):
     date: datetime.date
     commits: int
     authors: list[str]
-    repository_id: int
