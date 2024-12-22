@@ -10,4 +10,4 @@ class Repository(BaseModel):
     watchers: int
     forks: int
     open_issues: int
-    language: str
+    language: str | None
