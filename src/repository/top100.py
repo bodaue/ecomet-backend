@@ -34,5 +34,4 @@ class Top100Repository(BaseRepository[Repository]):
             query += " ORDER BY stars DESC"
 
         query += " LIMIT $1"
-        print(query)
         return await self._fetch_all(query, limit)
