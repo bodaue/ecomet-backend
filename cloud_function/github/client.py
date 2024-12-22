@@ -5,7 +5,6 @@ from typing import Any
 from urllib.parse import urljoin
 
 import aiohttp
-from starlette import status
 
 from cloud_function.github.auth import GitHubAuth
 from cloud_function.github.schemas import GitHubRepo, GitHubCommit
@@ -15,6 +14,7 @@ from cloud_function.github.settings import ParserSettings
 class GitHubClient:
     API_BASE_URL = "https://api.github.com"
     ITEMS_PER_PAGE = 100
+    HTTP_NOT_FOUND = 404
 
     def __init__(self, settings: ParserSettings) -> None:
         self._auth = GitHubAuth(
@@ -87,7 +87,7 @@ class GitHubClient:
                     "GET", f"repos/{owner}/{repo}/commits", params=params
                 )
             except aiohttp.ClientResponseError as e:
-                if e.status == status.HTTP_404_NOT_FOUND:
+                if e.status == self.HTTP_NOT_FOUND:
                     break
                 raise
 
