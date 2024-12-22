@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ecomet-backend"
+name = "Github-stats"
 version = "0.1.0"
 description = ""
 authors = ["Timur Kerimov <tim-online@mail.ru>"]

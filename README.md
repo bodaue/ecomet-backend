@@ -11,8 +11,8 @@ API-приложение для отображения статистики GitH
 
 1. Клонируйте репозиторий:
 ```bash
-git clone https://github.com/bodaue/ecomet-backend.git
-cd ecomet-backend
+git clone https://github.com/bodaue/github-stats-api
+cd github-stats-api
 ```
 
 2. Создайте файл .env на основе .env.example:
@@ -35,6 +35,26 @@ docker-compose up --build
 ```
 
 API будет доступно по адресу http://localhost:8000
+
+## Настройка GitHub токена
+
+Для работы парсера необходим GitHub Personal Access Token. Чтобы его получить:
+
+1. Войдите в свой GitHub аккаунт
+2. Перейдите в Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens 
+   или просто перейдите по ссылке: https://github.com/settings/personal-access-tokens
+
+3. Нажмите "Generate new token"
+
+4. Задайте настройки токена:
+   - Token name: любое описание для идентификации токена
+   - Expiration: выберите срок действия токена
+   - Repository access: отметьте следующее разрешение:
+     - `Public Repositories (read-only)` - для доступа к публичным репозиториям
+
+5. Нажмите "Generate token" и скопируйте полученный токен
+
+6. Добавьте токен в переменные окружения
 
 ## API Endpoints
 
